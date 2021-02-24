@@ -1,0 +1,3 @@
+[instance ID as string of numbers][space]
+[log level as integer][space]
+[log message]
