@@ -1,0 +1,6 @@
+Sorry! It looks like the parameters that were passed to the client
+are either not in the right format, or out of order.
+The test client accepts 2 mandatory parameters:
+- the logger port
+- the logger IP address
+Please try again with the parameters above, and in the same order.

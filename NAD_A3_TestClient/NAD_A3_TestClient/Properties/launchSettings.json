@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NAD_A3_TestClient": {
+      "commandName": "Project",
+      "commandLineArgs": "8080 172.26.45.87"
+    }
+  }
+}
