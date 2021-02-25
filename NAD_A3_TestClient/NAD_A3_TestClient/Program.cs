@@ -49,7 +49,7 @@ namespace NAD_A3_TestClient
 
         static string ProcessLogs(int loggerPort, IPAddress loggerIP, int instanceID)
         {
-            const int minLevel = 1;
+            const int minLevel = 0;
             const int maxLevel = 7;
 
             var randomLevel = new Random();
@@ -91,6 +91,7 @@ namespace NAD_A3_TestClient
                             Thread.Sleep(100); // This is to prevent too many messages being sent at once
                         }
 
+
                         Console.WriteLine("Logs Sent.\n");
                         return Constants.continueProgram;
                     }
@@ -103,13 +104,19 @@ namespace NAD_A3_TestClient
 
                     using (StreamReader sr = File.OpenText(Constants.noiseTextPath))
                     {
+                        List<string> noiseText = new List<string>();
                         string s;
-                        Console.WriteLine("Sending noise.\n");
                         while ((s = sr.ReadLine()) != null)
                         {
-                            // SendMessage(loggerIP, loggerPort, instanceID, randomLevel.Next(minLevel, maxLevel + 1), s);
-                            Console.WriteLine(s);
+                            noiseText.Add(s);
                         }
+                        Console.WriteLine("Sending noise.\n");
+                        foreach (string str in noiseText)
+                        {
+                            SendMessage(loggerIP, loggerPort, instanceID, randomLevel.Next(minLevel, maxLevel + 1), str);
+                            Console.WriteLine(str);
+                        }
+
                         Console.WriteLine("\nLogs Sent.\n");
                         return Constants.continueProgram;
                     }
@@ -133,7 +140,7 @@ namespace NAD_A3_TestClient
                     return Constants.continueProgram;
                 }
                 Console.WriteLine("\nSending log...");
-                // SendMessage(loggerIP, loggerPort, instanceID, logLevel, s);
+                SendMessage(loggerIP, loggerPort, instanceID, logLevel, userInput);
                 Console.WriteLine(userInput);
                 Console.WriteLine("Log sent.");
             }
