@@ -54,7 +54,7 @@ async def write_to_file(filename, message_elements):
         file_permission = "w"
 
     async with aiof.open(filename, file_permission) as out:
-        await out.write(current_time + " " + message_elements[0] + " " +
+        await out.write(current_time + "\t" + message_elements[0] + "\t" +
                         message_elements[1] + " " +
                         message_elements[2] + "\n")
         await out.flush()
@@ -68,6 +68,7 @@ def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((LOCALHOST, PORT))
+
 
     print("Server started")
     print("Waiting for client request")
@@ -83,7 +84,7 @@ def main():
 LOCALHOST = "172.26.45.87"
 PORT = 8080
 RECEIVE_BUFFER = 2048
-log_levels = {1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL"}
+log_levels = {0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE"}
 time_format = "%Y-%m-%d %H:%M:%S.%f"
 
 if __name__ == "__main__":
