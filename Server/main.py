@@ -3,6 +3,7 @@ import os
 import socket
 import threading
 from datetime import datetime
+from time import sleep
 
 import aiofiles as aiof
 
@@ -15,13 +16,35 @@ class ClientThread(threading.Thread):
     def run(self):
         data = self.csocket.recv(RECEIVE_BUFFER)
         msg = data.decode()
-        server_response = process_message(msg)
-        self.csocket.send(bytes(server_response, "UTF-8"))
-        print("Client disconnected")
+
+        message_elements = msg.split("|")
+
+        if client_ids.get(int(message_elements[0])) is None:
+            client_ids[int(message_elements[0])] = 0
+        else:
+            client_ids[int(message_elements[0])] += 1
+
+        print("client ids: ", client_ids)
+        if client_ids[int(message_elements[0])] < message_limit:
+            process_message(msg)
+            print("Client disconnected")
+
+
+class ManageClients(object):
+
+    def __init__(self):
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True  # Daemonize thread
+        thread.start()  # Start the execution
+
+    def run(self):
+        while True:
+            client_ids.clear()
+            print("\nCleared\n")
+            sleep(clear_interval)
 
 
 def process_message(message):
-    # print("message received: " + message)
     message_elements = message.split("|")
 
     if len(message_elements) == 3:
@@ -39,9 +62,9 @@ def process_message(message):
             loop.run_until_complete(loop.shutdown_asyncgens())
             loop.close()
 
-        return "Write Successful."
-    else:
-        return "ERROR: Unknown log format."
+
+def set_log_level(log_level):
+    return log_levels.get(log_level)
 
 
 async def write_to_file(filename, message_elements):
@@ -54,14 +77,10 @@ async def write_to_file(filename, message_elements):
         file_permission = "w"
 
     async with aiof.open(filename, file_permission) as out:
-        await out.write(current_time + "\t" + message_elements[0] + "\t" +
-                        message_elements[1] + " " +
+        await out.write(current_time + " " + message_elements[0] + " " +
+                        message_elements[1] + "\t" +
                         message_elements[2] + "\n")
         await out.flush()
-
-
-def set_log_level(log_level):
-    return log_levels.get(log_level)
 
 
 def main():
@@ -69,6 +88,7 @@ def main():
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((LOCALHOST, PORT))
 
+    ManageClients()
 
     print("Server started")
     print("Waiting for client request")
@@ -80,12 +100,17 @@ def main():
         newthread.start()
 
 
-# get these from .config file
+# need to get these from .config file
 LOCALHOST = "172.26.45.87"
 PORT = 8080
 RECEIVE_BUFFER = 2048
 log_levels = {0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE"}
 time_format = "%Y-%m-%d %H:%M:%S.%f"
+clear_interval = 120
+message_limit = 100
+
+# running total of each client's message count, cleared as specified
+client_ids = {}
 
 if __name__ == "__main__":
     main()
