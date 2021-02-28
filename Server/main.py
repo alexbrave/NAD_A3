@@ -32,9 +32,6 @@ class ClientThread(threading.Thread):
             else:
                 client_ids[int(message_elements[INDEX_CLIENT_ID])] += 1
 
-            #  for debugging
-            # print("client ids: ", client_ids)
-
             # If it's not a "noisy" client (less messages than the limit),
             #   process the message
             if client_ids[int(message_elements[INDEX_CLIENT_ID])] < MESSAGE_LIMIT:
@@ -88,8 +85,8 @@ async def write_to_file(filename, message_elements):
     # Write to the file (using specified format from config.yaml)
     async with aiof.open(filename, "a") as out:
         await out.write(LOG_FORMAT.format(time=current_time,
-                                          id=message_elements[INDEX_TIME],
-                                          log_level=message_elements[INDEX_CLIENT_ID],
+                                          id=message_elements[INDEX_CLIENT_ID],
+                                          log_level=message_elements[INDEX_LOG_LEVEL],
                                           message=message_elements[INDEX_MESSAGE]))
         await out.flush()
 
@@ -168,9 +165,9 @@ def main():
 CONFIG_FILE_NAME = "config.yaml"
 
 # settings are loaded from config.yaml
-LOCALHOST = ""
-PORT = 0
-RECEIVE_BUFFER = 0
+LOCALHOST = ""          # the local ip address of the server
+PORT = 0                # the port which the server is hosted on
+RECEIVE_BUFFER = 0      # the buffer for receiving messages from client
 LOG_LEVELS = {}
 TIME_FORMAT = ""
 MILLISECONDS_IN_SECOND = 0
