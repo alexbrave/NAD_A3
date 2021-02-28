@@ -1,0 +1,2 @@
+1614487172221|41625453|0|Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+1614487144464|1614487143|4|This is a log message!

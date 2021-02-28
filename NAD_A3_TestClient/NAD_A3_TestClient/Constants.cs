@@ -41,11 +41,21 @@ namespace NAD_A3_TestClient
         public const string cmdArgsErrorPath = @"..\..\..\..\textFiles\cmdArgsError.txt";
         public const string helpTextPath = @"..\..\..\..\textFiles\helpText.txt";
         public const string automaticTestTextPath = @"..\..\..\..\textFiles\automaticTestText.txt";
-        public const string noiseTextPath = @"..\..\..\..\textFiles\noiseText.txt";
+        public const string testLogsPath = @"..\..\..\..\textFiles\testLogs.txt";
 
 
-        // Placeholders
-        public const int preexistingLevel = 0;
+        // Other constants
+        public const bool sendAsIs = true;
+        public const bool formatLog = false;
+        public const string misformattedLog = "this is a misformatted log!";
+        public const string invalidNumber = "1234notANumber";
+        public const string levelTooHigh = "10";
+        public const string levelTooLow = "-1";
+        public const string levelInvalid = "Oof";
+        public const string placeholder = "placeholder";
+        // This is the maximum number of test logs that we can send, because this is how many 
+        // lines of test logs we have in our text logs file
+        public const int maxNumOfTestLogs = 148; 
 
 
         ////////////

@@ -1,8 +1,0 @@
-Please enter an integer to specify the log level:
-1 - TRACE
-2 - ALL
-3 - DEBUG
-4 - INFO
-5 - ERROR
-6 - FATAL
-7 - OFF
