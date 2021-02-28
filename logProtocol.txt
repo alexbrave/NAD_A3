@@ -1,8 +1,15 @@
-[instance ID as string of numbers][space]
-[log level as integer][space]
+Log protocol
+------------
+This is our log protocol that must be followed for the logger to accept a log 
+request from a client.
+
+[time in seconds since 1970][pipe]
+[instance ID as string of numbers][pipe]
+[log level as integer][pipe]
 [log message]
 
 
+Following are the log levels that the logger is compatible with
 Log Levels:
 -----------
 1 - TRACE

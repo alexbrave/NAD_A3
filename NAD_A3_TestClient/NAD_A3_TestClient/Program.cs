@@ -134,7 +134,7 @@ namespace NAD_A3_TestClient
                         {
                             time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                             line = reader.ReadLine();
-                            Console.WriteLine(line);
+                            Console.WriteLine("Sending a valid log with the level: " + i.ToString());
                             SendMessage(loggerIP, loggerPort, time, instanceID.ToString(), i.ToString(), 
                                 line, Constants.formatLog);
 
@@ -145,7 +145,7 @@ namespace NAD_A3_TestClient
                         // Next we'll send a request with invalid time
                         time = Constants.invalidNumber;
                         line = reader.ReadLine();
-                        Console.WriteLine(line);
+                        Console.WriteLine("Sending a log with an invalid time.");
                         SendMessage(loggerIP, loggerPort, time, instanceID.ToString(),
                             randomLevel.Next(minLevel, maxLevel + 1).ToString(),
                             line, Constants.formatLog);
@@ -155,7 +155,7 @@ namespace NAD_A3_TestClient
                         // Now we're going to send a log request with an invalid instance ID
                         time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                         line = reader.ReadLine();
-                        Console.WriteLine(line);
+                        Console.WriteLine("Sending a log with an invalid instance ID.");
                         SendMessage(loggerIP, loggerPort, time, Constants.invalidNumber, 
                             randomLevel.Next(minLevel, maxLevel + 1).ToString(),
                             line, Constants.formatLog);
@@ -165,7 +165,7 @@ namespace NAD_A3_TestClient
                         // Next we send a log request with a log level that is invalid
                         time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                         line = reader.ReadLine();
-                        Console.WriteLine(line);
+                        Console.WriteLine("Sending a log with an invalid level");
                         SendMessage(loggerIP, loggerPort, time, instanceID.ToString(),
                             Constants.levelInvalid, line, Constants.formatLog);
                         Thread.Sleep(smallPause);
@@ -174,7 +174,7 @@ namespace NAD_A3_TestClient
                         // Then we'll send a log request with a level that is too low
                         time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                         line = reader.ReadLine();
-                        Console.WriteLine(line);
+                        Console.WriteLine("Sending a log with a log level that is too low");
                         SendMessage(loggerIP, loggerPort, time, instanceID.ToString(),
                             Constants.levelTooLow, line, Constants.formatLog);
                         Thread.Sleep(smallPause);
@@ -183,7 +183,7 @@ namespace NAD_A3_TestClient
                         // Next we'll send a log request with a level that is too high
                         time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
                         line = reader.ReadLine();
-                        Console.WriteLine(line);
+                        Console.WriteLine("Sending a log with a log level that is too high");
                         SendMessage(loggerIP, loggerPort, time, instanceID.ToString(),
                             Constants.levelTooHigh, line, Constants.formatLog);
                         Thread.Sleep(smallPause);
@@ -192,6 +192,7 @@ namespace NAD_A3_TestClient
                         // Then we send an entirely misformatted message.
                         // This message is so misformatted in fact, that we set a special flag
                         // to SendMessage to not attempt any formatting
+                        Console.WriteLine("Sending a random string as an invalid log request.");
                         SendMessage(loggerIP, loggerPort, Constants.placeholder, Constants.placeholder,
                             Constants.placeholder, Constants.misformattedLog, Constants.sendAsIs);
                         Thread.Sleep(smallPause);
@@ -210,7 +211,7 @@ namespace NAD_A3_TestClient
             {
                 Console.WriteLine("Please enter the number of requests you'd like to send,\n" +
                     "or enter \"noise\" to send the all log requests to test the logger noise prevention.\n" +
-                    "The maximum number of requests is 148: ");
+                    "The maximum number of requests is 1000: ");
                 userInput = Console.ReadLine().Trim();
                 int numberOfRequestsToSend = 0;
 
@@ -269,8 +270,8 @@ namespace NAD_A3_TestClient
                             }
 
                             Console.WriteLine("\nLogs Sent.\n");
-                            return Constants.continueProgram;
                         }
+                        return Constants.continueProgram;
                     }
                 }
                 else 

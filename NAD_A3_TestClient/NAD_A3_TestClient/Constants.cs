@@ -55,7 +55,7 @@ namespace NAD_A3_TestClient
         public const string placeholder = "placeholder";
         // This is the maximum number of test logs that we can send, because this is how many 
         // lines of test logs we have in our text logs file
-        public const int maxNumOfTestLogs = 148; 
+        public const int maxNumOfTestLogs = 1000; 
 
 
         ////////////
