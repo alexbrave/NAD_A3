@@ -1,7 +1,7 @@
 Authors: Andrey Takhtamirov and Alex Braverman
 
 This is the README for the server.py application.
-This is a server which can accept multiple clients at a time over TCP and allows logging to files. 
+This is a server which can accept multiple clients at a time over TCP and allows logging to a file. 
 The client's message must be of proper format.
 
 
