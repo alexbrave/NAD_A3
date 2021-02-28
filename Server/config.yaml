@@ -18,7 +18,7 @@ server:
   # Millisecond to second conversion (for log time).
   milliseconds_in_second: 1000
 
-# Log File Settings: Change file name, directory
+# Log File Settings: Change file name, directory, client formatting
 log_file:
   # Must be an ascii format file
   file_name: "messages.log"
@@ -32,14 +32,23 @@ log_file:
   # The value is printed to log file
   log_levels: { 0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE" }
   # The log level code for turning off a client's logs
-  log_level_off: 6
+  #   (can be set to outside of valid log levels to turn off "turning off client's logs")
+  log_level_off: 8
   # The log level code for turning on a client's logs
   log_level_on: 0
+
+  # index of elements which are parsed from the client's message:
+  # <time>|<client_id>|<log_level>|<message>
+  # 4 elements are supported in total.
+  time_index: 0
+  client_id_index: 1
+  log_level_index: 2
+  message_index: 3
 
 # Noise Handling Settings:
 noise_handling:
   # The max number of messages allowed in <time_limit> settings.
   # Default : 100 messages max every 60 seconds.
-  # When the client reaches above it's allowance it is ignored until the time limit is reached.
+  # When the client reaches above it's allowance it is ignored until the time limit resets.
   max_number_of_messages: 100
   time_limit: 60

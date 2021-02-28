@@ -156,6 +156,10 @@ def load_config():
     global LOG_LEVEL_ON
     global MESSAGE_LIMIT
     global CLEAR_INTERVAL
+    global INDEX_TIME
+    global INDEX_CLIENT_ID
+    global INDEX_LOG_LEVEL
+    global INDEX_MESSAGE
 
     # load from yaml config file
     data = yaml.safe_load(open(CONFIG_FILE_NAME))
@@ -177,6 +181,11 @@ def load_config():
     LOG_DIRECTORY = file_settings.get("log_directory")
     LOG_LEVEL_OFF = file_settings.get("log_level_off")
     LOG_LEVEL_ON = file_settings.get("log_level_on")
+
+    INDEX_TIME = file_settings.get("time_index")
+    INDEX_CLIENT_ID = file_settings.get("client_id_index")
+    INDEX_LOG_LEVEL = file_settings.get("log_level_index")
+    INDEX_MESSAGE = file_settings.get("message_index")
 
     # load noise settings (manage clients)
     noise_settings = data["noise_handling"]
@@ -242,9 +251,9 @@ LOG_LEVEL_ON = 0  # log level which will turn client logging ON
 
 # Elements which compose the client's full message, split by '|'
 INDEX_TIME = 0  # the index of UTC Time in the client's message
-INDEX_CLIENT_ID = 1  # the index of the client's ID in their message
-INDEX_LOG_LEVEL = 2  # the index of the log level in the message
-INDEX_MESSAGE = 3  # the index of the message text in the complete message
+INDEX_CLIENT_ID = 0  # the index of the client's ID in their message
+INDEX_LOG_LEVEL = 0  # the index of the log level in the message
+INDEX_MESSAGE = 0  # the index of the message text in the complete message
 
 CLIENT_MESSAGE_ELEMENTS = 4  # the number of elements sent by the client
 
