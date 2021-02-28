@@ -1,3 +1,11 @@
+"""
+FILE          : server.py
+PROJECT       : Network Application Development A-03: Services and Logging
+TEAM          : Andrey Takhtamirov and Alex Braverman
+FIRST VERSION : Feb 24, 2021
+DESCRIPTION   : This is the server CLI which receives data from incoming clients
+                    and (if valid) logs the details to a configured file.
+"""
 import asyncio
 import os
 import socket
@@ -9,9 +17,13 @@ import aiofiles as aiof
 import yaml
 
 
-# Client service thread: receives message from client and increments the connection counter.
-# passes message to process_message() to be processed
 class ClientThread(threading.Thread):
+    """
+    Client service thread   : receives message from client and increments the
+                                connection counter. passes message to process_message()
+                                to be processed
+    """
+
     def __init__(self, clientsocket):
         threading.Thread.__init__(self)
         self.csocket = clientsocket
@@ -24,7 +36,10 @@ class ClientThread(threading.Thread):
         # Retrieve client ID to be monitored to check against spamming
         message_elements = msg.split(MESSAGE_DELIMITER)
 
-        if len(message_elements) == CLIENT_MESSAGE_ELEMENTS and message_elements[INDEX_CLIENT_ID].isnumeric():
+        # Check that the message from the client is valid (includes all 4 elements),
+        # The client ID should be a number
+        if len(message_elements) == CLIENT_MESSAGE_ELEMENTS \
+                and message_elements[INDEX_CLIENT_ID].isnumeric():
             # If new client, add to dictionary with 0 starting value,
             #   if existing client, increment counter by 1
             if client_ids.get(int(message_elements[INDEX_CLIENT_ID])) is None:
@@ -38,46 +53,75 @@ class ClientThread(threading.Thread):
                 process_message(message_elements)
 
 
-# Client Manager Thread: clears client message
-#   count every specified interval
-class ManageClients(object):
+class ManageClients:
+    """
+    Client Manager Thread   : clears client message count
+                                every specified interval
+    """
+
     def __init__(self):
         thread = threading.Thread(target=self.run)
         thread.daemon = True  # Daemonize thread
         thread.start()
 
+    # Clear the client_id dictionary every <interval> seconds
     @staticmethod
     def run():
-        # Clear the client_id dictionary every <interval> seconds
         while True:
             client_ids.clear()
             sleep(CLEAR_INTERVAL)
 
 
-# Process message (received from client) and write data to log file
 def process_message(message_elements):
-    # If the data is valid (need to add more checks to check for
-    #   [int] [int], [int], [string] format)
+    """
+    Function    : process_message
+    Description : Verifies that the message is valid and starts async writing task.
+    :param message_elements: list containing the elements of a client's message.
+    :return:
+    """
+
+    # If the data is valid, pass to logging function
     if message_elements[INDEX_TIME].isnumeric() and message_elements[INDEX_LOG_LEVEL].isnumeric():
 
-        # convert the int log level to a string (only if it's in the valid range (0-7))
+        # only if the log level is in the valid range (0-7)
         if 0 <= int(message_elements[INDEX_LOG_LEVEL]) < len(LOG_LEVELS):
             # Change the log level to a string value (using dictionary key-values)
             message_elements[INDEX_LOG_LEVEL] = LOG_LEVELS.get((int(message_elements[INDEX_LOG_LEVEL])))
 
-            # Create new coroutine to write to file
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+            # Check if the client is turning its logging on (only if the client was previously off)
+            if int(message_elements[INDEX_CLIENT_ID]) in off_clients \
+                    and message_elements[INDEX_LOG_LEVEL] == LOG_LEVELS.get(LOG_LEVEL_ON):
+                # Remove client from "OFF" list
+                off_clients.remove(int(message_elements[INDEX_CLIENT_ID]))
 
-            try:
-                loop.run_until_complete(write_to_file(LOG_DIRECTORY + LOG_FILE_NAME, message_elements))
-            finally:
-                loop.run_until_complete(loop.shutdown_asyncgens())
-                loop.close()
+            # Make sure client isn't "OFF" before logging
+            # the last "OFF" log will be logged before the client's logs turn off
+            if int(message_elements[INDEX_CLIENT_ID]) not in off_clients:
+                # Create new coroutine to write to file
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+
+                try:
+                    loop.run_until_complete(write_to_file(LOG_DIRECTORY + LOG_FILE_NAME, message_elements))
+                finally:
+                    loop.run_until_complete(loop.shutdown_asyncgens())
+                    loop.close()
+
+                # Check if the client is stopping logging for itself
+                if message_elements[INDEX_LOG_LEVEL] == LOG_LEVELS.get(LOG_LEVEL_OFF):
+                    off_clients.append(int(message_elements[INDEX_CLIENT_ID]))
 
 
-# Async write to file
 async def write_to_file(filename, message_elements):
+    """
+    Function    : write_to_file
+    Description : Asynchronously writes to a file (appending).
+                    File must exist before writing. Data is
+                    written with the format specified.
+    :param filename:    the file which will be appended.
+    :param message_elements:    list of message elements to be written.
+    :return:
+    """
     # Get the current time
     current_time = datetime.utcfromtimestamp(float(message_elements[INDEX_TIME])
                                              / MILLISECONDS_IN_SECOND).strftime(TIME_FORMAT)[:-3]
@@ -92,6 +136,12 @@ async def write_to_file(filename, message_elements):
 
 
 def load_config():
+    """
+    Function    : load_config
+    Description : Loads data into global variables from the config file
+    :return:
+    """
+    # Global variable declarations so they can be modified
     global LOCALHOST
     global PORT
     global RECEIVE_BUFFER
@@ -102,9 +152,12 @@ def load_config():
     global TIME_FORMAT
     global LOG_FORMAT
     global LOG_LEVELS
+    global LOG_LEVEL_OFF
+    global LOG_LEVEL_ON
     global MESSAGE_LIMIT
     global CLEAR_INTERVAL
 
+    # load from yaml config file
     data = yaml.safe_load(open(CONFIG_FILE_NAME))
 
     # load settings for basic server configuration
@@ -122,6 +175,8 @@ def load_config():
     LOG_FORMAT = file_settings.get("log_format")
     LOG_LEVELS = file_settings.get("log_levels")
     LOG_DIRECTORY = file_settings.get("log_directory")
+    LOG_LEVEL_OFF = file_settings.get("log_level_off")
+    LOG_LEVEL_ON = file_settings.get("log_level_on")
 
     # load noise settings (manage clients)
     noise_settings = data["noise_handling"]
@@ -130,6 +185,12 @@ def load_config():
 
 
 def main():
+    """
+    Main function. Runs the config loader and creates dir/file
+                    if needed. Starts a socket and the client manager.
+                    Listens for clients (forever) and starts threads as needed.
+    :return:
+    """
     # load server app settings
     load_config()
 
@@ -139,7 +200,7 @@ def main():
 
     # Create empty file if it doesn't exist
     if not os.path.exists(LOG_DIRECTORY + LOG_FILE_NAME):
-        open(LOG_DIRECTORY + LOG_FILE_NAME, 'w').close()
+        open(LOG_DIRECTORY + LOG_FILE_NAME, "w").close()
 
     # Create server socket
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -156,7 +217,6 @@ def main():
     while True:
         server.listen(1)
         clientsock, client_address = server.accept()
-        # print("\nConnection from : ", client_address)
         newthread = ClientThread(clientsock)
         newthread.start()
 
@@ -165,18 +225,20 @@ def main():
 CONFIG_FILE_NAME = "config.yaml"
 
 # settings are loaded from config.yaml
-LOCALHOST = ""          # the local ip address of the server
-PORT = 0                # the port which the server is hosted on
-RECEIVE_BUFFER = 0      # the buffer for receiving messages from client
-LOG_LEVELS = {}
-TIME_FORMAT = ""
+LOCALHOST = ""  # the local ip address of the server
+PORT = 0  # the port which the server is hosted on
+RECEIVE_BUFFER = 0  # the buffer for receiving messages from client
+LOG_LEVELS = {}  # log levels in a dictionary <int, string>
+TIME_FORMAT = ""  # the format string for the time format
 MILLISECONDS_IN_SECOND = 0
-CLEAR_INTERVAL = 0
-MESSAGE_LIMIT = 0
-MESSAGE_DELIMITER = ""
-LOG_FILE_NAME = ""
-LOG_DIRECTORY = ""
-LOG_FORMAT = ""
+CLEAR_INTERVAL = 0  # the interval for clearing noise counter
+MESSAGE_LIMIT = 0  # the limit of "noise" in an interval
+MESSAGE_DELIMITER = ""  # delimiter in the client's message
+LOG_FILE_NAME = ""  # file name of te log file
+LOG_DIRECTORY = ""  # directory name of the log file
+LOG_FORMAT = ""  # format of the log printout
+LOG_LEVEL_OFF = 0  # log level which will turn client logging OFF
+LOG_LEVEL_ON = 0  # log level which will turn client logging ON
 
 # Elements which compose the client's full message, split by '|'
 INDEX_TIME = 0  # the index of UTC Time in the client's message
@@ -186,8 +248,12 @@ INDEX_MESSAGE = 3  # the index of the message text in the complete message
 
 CLIENT_MESSAGE_ELEMENTS = 4  # the number of elements sent by the client
 
-# running total of each client's message count, cleared as specified
+# running total of each client's message count, cleared with interval
 client_ids = {}
+
+# Clients which send the "OFF" logging level are ignored until they send the "ALL level".
+# List of "OFF" clients.
+off_clients = []
 
 if __name__ == "__main__":
     main()

@@ -1,17 +1,45 @@
+# FILE          : config.yaml
+# PROJECT       : Network Application Development A-03: Services and Logging
+# TEAM          : Andrey Takhtamirov and Alex Braverman
+# FIRST VERSION : Feb 24, 2021
+# DESCRIPTION   : This is the configuration file for the server.py application.
+#                   It contains mandatory settings which are set on server startup.
+#                   The configuration file name is set in server.py
+
+# Server Settings: Change the IP Address and the Port.
 server:
   address: "172.26.45.87"
+  # Port must be above 1024.
   port: 8080
+  # The buffer for incoming messages (from clients).
   max_message_length: 2048
+  # The delimiter in client messages.
   message_delimiter: "|"
+  # Millisecond to second conversion (for log time).
   milliseconds_in_second: 1000
 
+# Log File Settings: Change file name, directory
 log_file:
+  # Must be an ascii format file
   file_name: "messages.log"
+  # Specified directory (if none use "./").
   log_directory: "./logs/"
+  # The format with which the time will be logged
   log_time_format: "%Y-%m-%d %H:%M:%S.%f"
+  # Logging format string. Not all elements can be present, order can be changed
   log_format: "{time} {id} {log_level}\t{message}\n"
-  log_levels: {0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE"}
+  # Log levels. Custom levels can be added here. The Key is the client code for each value.
+  # The value is printed to log file
+  log_levels: { 0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE" }
+  # The log level code for turning off a client's logs
+  log_level_off: 6
+  # The log level code for turning on a client's logs
+  log_level_on: 0
 
+# Noise Handling Settings:
 noise_handling:
+  # The max number of messages allowed in <time_limit> settings.
+  # Default : 100 messages max every 60 seconds.
+  # When the client reaches above it's allowance it is ignored until the time limit is reached.
   max_number_of_messages: 100
   time_limit: 60
