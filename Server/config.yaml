@@ -1,0 +1,17 @@
+server:
+  address: "172.26.45.87"
+  port: 8080
+  max_message_length: 2048
+  message_delimiter: "|"
+  milliseconds_in_second: 1000
+
+log_file:
+  file_name: "messages.log"
+  log_directory: "./logs/"
+  log_time_format: "%Y-%m-%d %H:%M:%S.%f"
+  log_format: "{time} {id} {log_level}\t{message}\n"
+  log_levels: {0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE"}
+
+noise_handling:
+  max_number_of_messages: 100
+  time_limit: 60
