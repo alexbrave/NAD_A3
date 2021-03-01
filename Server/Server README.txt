@@ -4,6 +4,7 @@ This is the README for the server.py application.
 This is a server which can accept multiple clients at a time over TCP and allows logging to a file. 
 The client's message must be of proper format.
 
+Simply run the server script to start. Some python modules might need to be installed before the first run.
 
 
 CONFIG
