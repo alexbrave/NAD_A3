@@ -1,3 +1,6 @@
+--------
+ SERVER
+--------
 Authors: Andrey Takhtamirov and Alex Braverman
 
 This is the README for the server.py application.
@@ -6,9 +9,11 @@ The client's message must be of proper format.
 
 Simply run the server script to start. Some python modules might need to be installed before the first run.
 
-Time is represented in UTC
+Logged time is represented in UTC
+
 
 CONFIG
+------
 - The address and port must be configured in the config.yaml file.
 
 Can be configured:
@@ -16,6 +21,7 @@ Can be configured:
 - file name, directory
 - log time format
 - complete log message format
+- client sending format
 - log levels and client log level codes
 - log levels to turn on/off client logging
 - indexes of client message elements
@@ -25,7 +31,8 @@ The accepted format is:
 
 	<int_ms_since_epoch>|<int_client_id>|<int_log_level>|<str_message>
 
-- The delimiter ('|') and sending format can be configured in the config file.
+- The client ID is the time at client's startup, in seconds.
+
 
 This message will be logged in such format:
 
@@ -34,13 +41,12 @@ This message will be logged in such format:
 - This format can be configured in the config file.
 
 
-
 LOGGING LEVELS
-
+--------------
 By default, 8 logging levels are supported:
 
 Client Code	Logging Level	Notes
-0		ALL		Turns on client logging if off
+0		ALL		Turns on client logging (if off)
 1		DEBUG
 2		INFO
 3		WARN
@@ -54,13 +60,12 @@ Client Code	Logging Level	Notes
 - Configurable "ON" and "OFF" codes.
 
 
-
 NOISE
-
+-----
 Anti-Noise Features:
 
 - Message/Time limit configured in config file.
-- If reached max message limit, other messages are ignored until the specified time limit runs out.
+- If a client has reached the max message limit, other messages from the client are ignored until the specified time limit runs out.
 
 
 Mis-Configured Clients:
