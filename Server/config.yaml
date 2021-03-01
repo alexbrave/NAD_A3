@@ -33,7 +33,7 @@ log_file:
   log_levels: { 0: "ALL", 1: "DEBUG", 2: "INFO", 3: "WARN", 4: "ERROR", 5: "FATAL", 6: "OFF", 7: "TRACE" }
   # The log level code for turning off a client's logs
   #   (can be set to outside of valid log levels to turn off "turning off client's logs")
-  log_level_off: 8
+  log_level_off: 6
   # The log level code for turning on a client's logs
   log_level_on: 0
 
