@@ -6,6 +6,7 @@ The client's message must be of proper format.
 
 Simply run the server script to start. Some python modules might need to be installed before the first run.
 
+Time is represented in UTC
 
 CONFIG
 - The address and port must be configured in the config.yaml file.
