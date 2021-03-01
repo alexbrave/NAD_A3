@@ -221,7 +221,7 @@ namespace NAD_A3_TestClient
                     // We should make sure that the user has not entered a 0 or negative number of requests to send
                     if(userInput != Constants.noise && numberOfRequestsToSend <= 0)
                     {
-                        Console.WriteLine("Sorry the number of requests to send cannot be 0 or negative");
+                        Console.WriteLine("Sorry the number of requests to send cannot be 0 or negative!");
                         return Constants.continueProgram;
                     }
 

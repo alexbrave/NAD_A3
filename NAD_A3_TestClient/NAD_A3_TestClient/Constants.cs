@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+* FILE          : Constants.cs
+* PROJECT       : SENG2040-21W-Sec1-Network Application Development - Assignment #3
+* PROGRAMMER    : Andrey Takhtamirov, Alex Braverman
+* FIRST VERSION : February 28, 2020
+* DESCRIPTION   : 
+*           This file contains some commonly-used values in the test client.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +15,7 @@ namespace NAD_A3_TestClient
 {
     static public class Constants
     {
-        // On startup get server IP and PORT from cmd line args
-
+        // Our welcome message!
         public const string welcomeMessage = "Welcome to the NAD A3 Test Client.\n " +
             "Please enter a command, or enter \"help\" for a list of commands:\n";
 
@@ -35,16 +43,22 @@ namespace NAD_A3_TestClient
         public const string continueProgram = "";
 
 
+
         /////////////////////
         // Text File Paths //
         /////////////////////
+        
         public const string cmdArgsErrorPath = @"..\..\..\..\textFiles\cmdArgsError.txt";
         public const string helpTextPath = @"..\..\..\..\textFiles\helpText.txt";
         public const string automaticTestTextPath = @"..\..\..\..\textFiles\automaticTestText.txt";
         public const string testLogsPath = @"..\..\..\..\textFiles\testLogs.txt";
 
 
-        // Other constants
+
+        /////////////////////
+        // Other constants //
+        /////////////////////
+        
         public const bool sendAsIs = true;
         public const bool formatLog = false;
         public const string misformattedLog = "this is a misformatted log!";
@@ -61,6 +75,7 @@ namespace NAD_A3_TestClient
         ////////////
         // Errors //
         ////////////
+        
         public const string FileIOError = "Sorry something went wrong when trying to open a file!\n";
     }
 }
